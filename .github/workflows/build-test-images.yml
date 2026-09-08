@@ -1,0 +1,96 @@
+name: Build test images
+run-name: Test images for ${{ inputs.source_ref }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Branch, tag or commit to test
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: manual-test-images
+  cancel-in-progress: false
+
+env:
+  DOCKER_BUILD_RECORD_UPLOAD: "false"
+  DOCKER_BUILD_SUMMARY: "false"
+
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      commit: ${{ steps.source.outputs.commit }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ inputs.source_ref }}
+          persist-credentials: false
+      - id: source
+        run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        component: [backend, frontend]
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ needs.prepare.outputs.commit }}
+          persist-credentials: false
+      - name: Generate backend version metadata
+        env:
+          SOURCE_COMMIT: ${{ needs.prepare.outputs.commit }}
+        run: |
+          printf 'CISO_ASSISTANT_VERSION=test-%s\nCISO_ASSISTANT_BUILD=%s\n' "$SOURCE_COMMIT" "$SOURCE_COMMIT" > backend/.meta
+          cp backend/.meta backend/ciso_assistant/.meta
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
+        with:
+          context: ./${{ matrix.component }}
+          file: ./${{ matrix.component }}/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/${{ github.repository }}/test-${{ matrix.component }}:run-${{ github.run_id }}-${{ github.run_attempt }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ needs.prepare.outputs.commit }}
+
+  ready:
+    needs: [prepare, build]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Show deployment command
+        env:
+          SOURCE_COMMIT: ${{ needs.prepare.outputs.commit }}
+          IMAGE_TAG: run-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          {
+            echo '## Test images ready'
+            echo "Source commit: $SOURCE_COMMIT"
+            echo 'Run on the Ubuntu test server:'
+            echo '```bash'
+            echo 'cd /root/ciso-test'
+            echo "bash update-code.sh $IMAGE_TAG"
+            echo '```'
+            echo 'For the first build, enable public visibility of both test packages before downloading.'
+          } >> "$GITHUB_STEP_SUMMARY"
