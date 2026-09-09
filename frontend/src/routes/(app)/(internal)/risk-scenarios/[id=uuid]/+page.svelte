@@ -16,6 +16,7 @@
 	import AuditTrailButton from '$lib/components/AuditTrail/AuditTrailButton.svelte';
 	import CommentsPanel from '$lib/components/CommentsPanel/CommentsPanel.svelte';
 	import RiskAcceptancesSection from '$lib/components/RiskAcceptances/RiskAcceptancesSection.svelte';
+	import RiskApprovals from '$lib/components/RiskApprovals/RiskApprovals.svelte';
 
 	import { goto } from '$app/navigation';
 	import { openRiskAcceptanceModal } from '$lib/utils/riskAcceptance';
@@ -58,6 +59,14 @@
 			user,
 			action: 'add',
 			model: 'riskacceptance',
+			object: data.scenario
+		})
+	);
+	const canRequestApproval = $derived(
+		canPerformActionOnObject({
+			user,
+			action: 'add',
+			model: 'validationflow',
 			object: data.scenario
 		})
 	);
@@ -639,6 +648,14 @@
 			</div>
 		{/if}
 	</div>
+	{#if page.data.featureflags?.validation_flows && page.data.featureflags?.risk_owner_approvals}
+		<RiskApprovals
+			flows={data.riskApprovals}
+			approvers={data.approvalOptions.approvers}
+			canRequest={canRequestApproval && !data.scenario.risk_assessment?.is_locked}
+			errorMessage={form?.approvalError}
+		/>
+	{/if}
 	{#if page.data?.featureflags?.comments}
 		<CommentsPanel parentType="risk_scenario" parentId={data.scenario.id} />
 	{/if}

@@ -79,7 +79,46 @@ The pattern fits anywhere a decision needs **formal, traceable sign-off**:
 
 It is _not_ the right tool for casual review or peer feedback — for those, use comments, the requirement-assessment review status, or a [findings binder](findings-assessments.md). Validation flows are explicitly heavy: they exist so that the approval is preserved as evidence.
 
-## Related
+## Risk-owner approvals
+
+An individual risk scenario offers two decisions in its **Risk approvals** section:
+**Assessment**, followed by **Treatment**. This reuses validation flows and their
+personal approver, notifications and event history. Both the validation-flows and
+risk-owner-approvals feature flags must be enabled, and the requester needs
+permission to create a validation flow in the scenario's domain. Risk-owner
+approvals are disabled by default. While disabled, scenarios retain their existing
+behaviour and expose no risk-approval section or decision path. Existing approval
+history is preserved if the feature is disabled after use.
+
+Assign the risk owner on the scenario first. Eligible approvers are active named
+users who resolve from its owner actors (including team members and entity
+representatives), can read the scenario and can change validation flows in that
+domain. Asset ownership does not automatically confer risk ownership or approval
+rights. If several owners are assigned, each request still names one accountable
+approver; this is not an all-owners voting workflow.
+
+Assessment approval captures the scenario, rationale, ratings, risk matrix,
+owners, assets and existing controls. Treatment approval requires a current
+approved assessment and captures the treatment option, planned controls, their
+owners and dates, and the residual risk. The approver explicitly approves the
+plan and accepts its stated residual risk subject to the planned measures. That
+decision does not prove implementation or effectiveness, and does not change a
+`mitigate` decision to `accept`.
+
+Every submission and decision retains its snapshot. A change to the captured
+content or approval authority makes the request or approval out of date. A
+revoked assessment also invalidates the treatment approval that relied on it.
+Normal progress updates to a planned control do not invalidate its plan; changed
+scope, owner or dates do. For a pending stale request, request changes and
+resubmit; for an already accepted decision, submit a new request. Historical
+decisions remain visible and cannot be edited or deleted through the flow API.
+The scenario and other scenarios in the study remain editable.
+
+These two steps are an organisational workflow choice. They support risk-owner
+approval of treatment plans and acceptance of residual risks; they do not imply
+that ISO 27001 mandates this particular software sequence.
+
+## Related resources
 
 - [Policies](policies.md) — typical objects routed through validation flows for publication
 - [Findings binders](findings-assessments.md) — lighter-weight review/remediation tracking

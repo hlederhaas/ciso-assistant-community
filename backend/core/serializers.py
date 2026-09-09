@@ -5932,6 +5932,24 @@ class ObjectClassificationWriteSerializer(BaseModelSerializer):
 
 
 class ValidationFlowWriteSerializer(BaseModelSerializer):
+    confirm_residual_risk = serializers.BooleanField(required=False, write_only=True)
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        if (
+            self.instance
+            and not self.instance.risk_scenario_id
+            and (attrs.get("risk_scenario") or attrs.get("risk_approval_stage"))
+        ):
+            raise serializers.ValidationError("riskApprovalImmutable")
+        if (
+            not self.instance
+            and attrs.get("risk_approval_stage")
+            and not attrs.get("risk_scenario")
+        ):
+            raise serializers.ValidationError("riskApprovalSingleScenario")
+        return attrs
+
     ALLOWED_STATUS_TRANSITIONS = {
         ValidationFlow.Status.SUBMITTED: {
             ValidationFlow.Status.ACCEPTED,
@@ -5961,6 +5979,14 @@ class ValidationFlowWriteSerializer(BaseModelSerializer):
         Override create to automatically set the requester to the current user
         and create initial submission event.
         """
+        if validated_data.get("risk_scenario"):
+            from core.risk_approvals import create_approval
+
+            self._check_object_perm(
+                validated_data, "add", folder=validated_data.get("folder")
+            )
+            return create_approval(validated_data, self.context["request"].user)
+        validated_data.pop("confirm_residual_risk", None)
         from core.models import FlowEvent
 
         request_user = self.context["request"].user
@@ -6004,6 +6030,14 @@ class ValidationFlowWriteSerializer(BaseModelSerializer):
         - Requester can modify status when status is 'change_requested'
         - Creates FlowEvent for each status transition
         """
+        if instance.risk_scenario_id:
+            from core.risk_approvals import update_approval
+
+            self._check_object_perm(instance, "change")
+            return update_approval(
+                instance, validated_data, self.context["request"].user
+            )
+        validated_data.pop("confirm_residual_risk", None)
         from core.models import FlowEvent
 
         request_user = self.context["request"].user
@@ -6183,7 +6217,7 @@ class ValidationFlowWriteSerializer(BaseModelSerializer):
     class Meta:
         model = ValidationFlow
         fields = "__all__"
-        read_only_fields = ["requester"]
+        read_only_fields = ["requester", "risk_snapshot"]
 
 
 class FlowEventSerializer(BaseModelSerializer):
@@ -6191,10 +6225,28 @@ class FlowEventSerializer(BaseModelSerializer):
 
     class Meta:
         model = FlowEvent
-        fields = ["id", "event_type", "event_actor", "event_notes", "created_at"]
+        fields = [
+            "id",
+            "event_type",
+            "event_actor",
+            "event_notes",
+            "created_at",
+            "risk_snapshot",
+            "residual_risk_accepted",
+        ]
 
 
 class ValidationFlowReadSerializer(BaseModelSerializer):
+    risk_scenario = FieldsRelatedField(["id", "name", "ref_id"])
+    risk_approval_current = serializers.SerializerMethodField()
+
+    def get_risk_approval_current(self, obj):
+        if not obj.risk_scenario_id:
+            return None
+        from core.risk_approvals import is_current
+
+        return is_current(obj)
+
     str = serializers.CharField(source="__str__", read_only=True)
     path = PathField(read_only=True)
     folder = FieldsRelatedField()

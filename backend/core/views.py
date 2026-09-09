@@ -7218,6 +7218,16 @@ class RiskScenarioFilter(TimestampRangeFilterMixin, GenericFilterSet):
 
 
 class RiskScenarioViewSet(ExportMixin, BaseModelViewSet):
+    @action(detail=True, methods=["get"], url_path="approval-options")
+    def approval_options(self, request, pk=None):
+        """List named risk owners eligible to approve this scenario."""
+        from core.risk_approvals import approval_candidates, risk_approvals_enabled
+
+        if not risk_approvals_enabled():
+            raise PermissionDenied("riskApprovalFeatureDisabled")
+        scenario = self.get_object()
+        return Response({"approvers": approval_candidates(scenario)})
+
     """
     API endpoint that allows risk scenarios to be viewed or edited.
     """
@@ -7786,6 +7796,8 @@ VALIDATION_FLOW_OPEN_STATUSES = [
 
 
 class ValidationFlowFilterSet(GenericFilterSet):
+    risk_scenario = df.UUIDFilter(field_name="risk_scenario_id")
+
     folder = df.ModelMultipleChoiceFilter(queryset=Folder.objects.all())
     requester = df.ModelMultipleChoiceFilter(queryset=User.objects.all())
     approver = df.ModelMultipleChoiceFilter(queryset=User.objects.all())
@@ -7857,6 +7869,11 @@ class ValidationFlowFilterSet(GenericFilterSet):
 
 
 class ValidationFlowViewSet(BaseModelViewSet):
+    def perform_destroy(self, instance):
+        if instance.risk_scenario_id:
+            raise ValidationError("riskApprovalHistoryProtected")
+        return super().perform_destroy(instance)
+
     """
     API endpoint that allows validation flows to be viewed or edited.
     """
@@ -7896,7 +7913,9 @@ class ValidationFlowViewSet(BaseModelViewSet):
         accreditation_model = related_model("accreditations")
         contract_model = related_model("contracts")
 
-        queryset = queryset.select_related("requester", "approver").prefetch_related(
+        queryset = queryset.select_related(
+            "requester", "approver", "risk_scenario__risk_assessment__risk_matrix"
+        ).prefetch_related(
             Prefetch("events", queryset=events_qs),
             Prefetch("compliance_assessments", queryset=compliance_qs),
             Prefetch("risk_assessments", queryset=risk_qs),

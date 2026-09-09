@@ -75,8 +75,22 @@ export const load = (async ({ fetch, params, cookies, locals }) => {
 		.then((res) => res.json())
 		.then((res) => JSON.parse(res.json_definition));
 
+	const riskApprovalsEnabled = Boolean(
+		locals.featureflags?.validation_flows && locals.featureflags?.risk_owner_approvals
+	);
+	const approvalOptions = riskApprovalsEnabled
+		? await fetch(`${baseEndpoint}approval-options/`).then((res) =>
+				res.ok ? res.json() : { approvers: [] }
+			)
+		: { approvers: [] };
+	const riskApprovals = riskApprovalsEnabled
+		? await fetchAllPages(fetch, `${BASE_API_URL}/validation-flows/?risk_scenario=${params.id}`)
+		: [];
+
 	return {
 		scenario,
+		approvalOptions,
+		riskApprovals,
 		tables,
 		riskMatrix,
 		title: scenario.str,
@@ -85,6 +99,50 @@ export const load = (async ({ fetch, params, cookies, locals }) => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
+	requestApproval: async (event) => {
+		if (
+			!event.locals.featureflags?.validation_flows ||
+			!event.locals.featureflags?.risk_owner_approvals
+		) {
+			return fail(403, { approvalError: m.riskApprovalFeatureDisabled() });
+		}
+		const input = await event.request.formData();
+		const parsed = z
+			.object({
+				approver: z.uuid(),
+				stage: z.enum(['assessment', 'treatment']),
+				notes: z.string().max(10000),
+				deadline: z.union([z.literal(''), z.iso.date()])
+			})
+			.safeParse(Object.fromEntries(input));
+		if (!parsed.success) return fail(400, { approvalError: m.riskApprovalInvalidRequest() });
+		const scenarioResponse = await event.fetch(
+			`${BASE_API_URL}/risk-scenarios/${event.params.id}/`
+		);
+		if (!scenarioResponse.ok)
+			return fail(scenarioResponse.status, { approvalError: m.anErrorOccurred() });
+		const scenario = await scenarioResponse.json();
+		const response = await event.fetch(`${BASE_API_URL}/validation-flows/`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				folder: scenario.folder.id,
+				risk_scenario: event.params.id,
+				risk_approval_stage: parsed.data.stage,
+				approver: parsed.data.approver,
+				request_notes: parsed.data.notes,
+				validation_deadline: parsed.data.deadline || null
+			})
+		});
+		if (!response.ok) {
+			const { validationFlowErrorMessage } = await import('$lib/utils/validationFlows');
+			return fail(response.status, {
+				approvalError: validationFlowErrorMessage(await response.json()) ?? m.anErrorOccurred()
+			});
+		}
+		setFlash({ type: 'success', message: m.riskApprovalRequested() }, event);
+		return { approvalRequested: true };
+	},
 	syncToActions: async (event) => {
 		const formData = await event.request.formData();
 
