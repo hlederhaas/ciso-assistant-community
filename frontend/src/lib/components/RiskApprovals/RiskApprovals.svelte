@@ -8,7 +8,7 @@
 		approvers,
 		managementApprovers,
 		residualRiskAboveTolerance,
-		riskTolerance,
+		riskToleranceLabel,
 		riskToleranceConfigured,
 		canRequest,
 		errorMessage = ''
@@ -17,7 +17,7 @@
 		approvers: { id: string; email: string; name: string }[];
 		managementApprovers: { id: string; email: string; name: string }[];
 		residualRiskAboveTolerance: boolean;
-		riskTolerance: number;
+		riskToleranceLabel: string;
 		riskToleranceConfigured: boolean;
 		canRequest: boolean;
 		errorMessage?: string;
@@ -92,7 +92,7 @@
 		<p class="text-sm preset-tonal-warning p-3">
 			{managementAcceptanceApproved
 				? m.riskApprovalManagementAccepted()
-				: m.riskApprovalManagementPending({ tolerance: String(riskTolerance) })}
+				: m.riskApprovalManagementPending({ tolerance: riskToleranceLabel })}
 		</p>
 	{/if}
 	{#each flows as flow (flow.id)}

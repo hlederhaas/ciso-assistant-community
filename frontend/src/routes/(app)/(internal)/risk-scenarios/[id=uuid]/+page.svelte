@@ -678,7 +678,8 @@
 			approvers={data.approvalOptions.approvers}
 			managementApprovers={data.approvalOptions.management_approvers}
 			residualRiskAboveTolerance={data.approvalOptions.residual_risk_above_tolerance}
-			riskTolerance={data.approvalOptions.risk_tolerance}
+			riskToleranceLabel={data.riskMatrix.risk?.[data.approvalOptions.risk_tolerance]?.name ??
+				String(data.approvalOptions.risk_tolerance)}
 			riskToleranceConfigured={data.approvalOptions.risk_tolerance_configured}
 			canRequest={canRequestApproval && !data.scenario.risk_assessment?.is_locked}
 			errorMessage={form?.approvalError}
