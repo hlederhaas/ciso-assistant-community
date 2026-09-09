@@ -6063,5 +6063,10 @@
 	"riskApprovalInvalidRequest": "Vérifiez l’approbateur, la décision et la date limite.",
 	"riskOwnerApprovalsFeature": "Approbations par les propriétaires des risques",
 	"riskOwnerApprovalsFeatureDescription": "Exige l’approbation de l’évaluation et du plan de traitement, ainsi qu’une approbation distincte de la direction lorsque le risque résiduel dépasse le seuil de tolérance. Nécessite les circuits de validation.",
-	"riskApprovalFeatureDisabled": "Les approbations par les propriétaires des risques ne sont pas activées."
+	"riskApprovalFeatureDisabled": "Les approbations par les propriétaires des risques ne sont pas activées.",
+	"riskApprovalStatus": "Statut d’approbation",
+	"riskApprovalNotRequested": "Non demandée",
+	"riskApprovalNotRequired": "Non requise",
+	"riskApprovalWaitingForTreatment": "En attente du traitement",
+	"riskApprovalToleranceMissingShort": "Tolérance manquante"
 }

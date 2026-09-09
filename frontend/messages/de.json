@@ -3634,5 +3634,10 @@
 	"riskApprovalInvalidRequest": "Prüfe Freigeber, Entscheidung und Frist.",
 	"riskOwnerApprovalsFeature": "Risikoeigentümer-Freigaben",
 	"riskOwnerApprovalsFeatureDescription": "Aktiviert die Freigabe der Risikoeinstufung und des Behandlungsplans sowie eine gesonderte Freigabe durch die oberste Leitung, wenn das Restrisiko die Toleranz überschreitet. Validierungsabläufe müssen ebenfalls aktiviert sein.",
-	"riskApprovalFeatureDisabled": "Risikoeigentümer-Freigaben sind nicht aktiviert."
+	"riskApprovalFeatureDisabled": "Risikoeigentümer-Freigaben sind nicht aktiviert.",
+	"riskApprovalStatus": "Freigabestatus",
+	"riskApprovalNotRequested": "Nicht angefordert",
+	"riskApprovalNotRequired": "Nicht erforderlich",
+	"riskApprovalWaitingForTreatment": "Wartet auf Behandlung",
+	"riskApprovalToleranceMissingShort": "Toleranz fehlt"
 }

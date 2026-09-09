@@ -22,7 +22,25 @@
 		canRequest: boolean;
 		errorMessage?: string;
 	} = $props();
-	let stage = $state('assessment');
+	let stage = $state(
+		!flows.some(
+			(flow) =>
+				flow.risk_approval_stage === 'assessment' &&
+				flow.status === 'accepted' &&
+				flow.risk_approval_current
+		)
+			? 'assessment'
+			: !flows.some(
+						(flow) =>
+							flow.risk_approval_stage === 'treatment' &&
+							flow.status === 'accepted' &&
+							flow.risk_approval_current
+				  )
+				? 'treatment'
+				: residualRiskAboveTolerance
+					? 'residual_acceptance'
+					: 'assessment'
+	);
 	let pending = $state(false);
 	const ratingApproved = $derived(
 		flows.some(
@@ -58,7 +76,11 @@
 	}
 </script>
 
-<section class="card p-4 space-y-4 bg-surface-50-950" data-testid="risk-approvals">
+<section
+	id="risk-approvals"
+	class="card p-4 space-y-4 bg-surface-50-950"
+	data-testid="risk-approvals"
+>
 	<h2 class="text-lg font-semibold">{m.riskApprovals()}</h2>
 	<p class="text-sm">{m.riskApprovalHelp()}</p>
 	{#if !riskToleranceConfigured}

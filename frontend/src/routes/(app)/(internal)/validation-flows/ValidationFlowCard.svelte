@@ -51,6 +51,12 @@
 		return name || user.email;
 	}
 
+	function riskApprovalStageLabel(stage: string): string {
+		if (stage === 'assessment') return m.riskApprovalAssessment();
+		if (stage === 'treatment') return m.riskApprovalTreatment();
+		return m.riskApprovalResidualAcceptance();
+	}
+
 	function runAction(action: ValidationFlowAction) {
 		modalStore.trigger({
 			type: 'component',
@@ -105,6 +111,18 @@
 				</span>
 			{/if}
 		</div>
+
+		{#if flow.risk_scenario && flow.risk_approval_stage}
+			<div class="flex flex-wrap items-center gap-2 text-sm" data-testid="risk-approval-subject">
+				<span class="font-medium">{m.riskApprovalStage()}:</span>
+				<span class="badge preset-tonal-primary">
+					{riskApprovalStageLabel(flow.risk_approval_stage)}
+				</span>
+				<Anchor href="/risk-scenarios/{flow.risk_scenario.id}" class="anchor">
+					{flow.risk_scenario.ref_id} – {flow.risk_scenario.name}
+				</Anchor>
+			</div>
+		{/if}
 
 		{#if linkedObjects.length}
 			<div class="flex flex-col gap-1">

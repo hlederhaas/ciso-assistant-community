@@ -33,10 +33,9 @@ def owner_can_approve(scenario, user):
     """Check named ownership, object visibility and approval permission."""
     if not user or not user.is_active:
         return False
+    scenario_owner_ids = {actor.pk for actor in scenario.owner.all()}
     return (
-        scenario.owner.filter(
-            pk__in=[a.pk for a in Actor.get_all_for_user(user)]
-        ).exists()
+        bool(scenario_owner_ids & {actor.pk for actor in Actor.get_all_for_user(user)})
         and RoleAssignment.is_object_readable(user, RiskScenario, scenario.pk)
         and RoleAssignment.is_access_allowed(
             user,
@@ -100,12 +99,13 @@ def _controls(manager, planned=False):
                 + ([] if planned else ["status"]),
             ),
             "id": str(control.pk),
-            "owners": sorted(
-                str(pk) for pk in control.owner.values_list("pk", flat=True)
-            ),
-            "owner_names": [str(owner) for owner in control.owner.order_by("pk")],
+            "owners": sorted(str(owner.pk) for owner in control.owner.all()),
+            "owner_names": [
+                str(owner)
+                for owner in sorted(control.owner.all(), key=lambda item: item.pk)
+            ],
         }
-        for control in manager.order_by("pk")
+        for control in sorted(manager.all(), key=lambda item: item.pk)
     ]
 
 
@@ -119,16 +119,14 @@ def snapshot(scenario, stage):
         "folder": str(scenario.folder_id),
         "study": str(scenario.risk_assessment_id),
         "matrix": scenario.risk_assessment.risk_matrix.json_definition,
-        "owners": sorted(str(pk) for pk in scenario.owner.values_list("pk", flat=True)),
+        "owners": sorted(str(owner.pk) for owner in scenario.owner.all()),
         "assets": [
             {"id": str(asset.pk), "name": asset.name, "description": asset.description}
-            for asset in scenario.assets.order_by("pk")
+            for asset in sorted(scenario.assets.all(), key=lambda item: item.pk)
         ],
-        "threats": sorted(
-            str(pk) for pk in scenario.threats.values_list("pk", flat=True)
-        ),
+        "threats": sorted(str(threat.pk) for threat in scenario.threats.all()),
         "vulnerabilities": sorted(
-            str(pk) for pk in scenario.vulnerabilities.values_list("pk", flat=True)
+            str(vulnerability.pk) for vulnerability in scenario.vulnerabilities.all()
         ),
         "assessment": _values(
             scenario,
@@ -158,15 +156,16 @@ def snapshot(scenario, stage):
     return json.loads(json.dumps(data, cls=DjangoJSONEncoder))
 
 
-def is_current(flow):
+def is_current(flow, scenario=None):
     """Check that content, authority and prerequisite approval still match."""
     if not flow.risk_scenario_id or not flow.risk_snapshot:
         return False
-    # Callers may retain a flow instance while its scenario is edited elsewhere.
-    # Compare against persisted content, never the FK's stale instance cache.
-    scenario = RiskScenario.objects.select_related("risk_assessment__risk_matrix").get(
-        pk=flow.risk_scenario_id
-    )
+    if scenario is None:
+        # Callers may retain a flow instance while its scenario is edited elsewhere.
+        # Compare against persisted content, never the FK's stale instance cache.
+        scenario = RiskScenario.objects.select_related(
+            "risk_assessment__risk_matrix"
+        ).get(pk=flow.risk_scenario_id)
     authorised = (
         management_can_accept(scenario, flow.approver)
         if flow.risk_approval_stage == "residual_acceptance"
@@ -190,8 +189,51 @@ def is_current(flow):
             risk_approval_stage=stage,
             status="accepted",
         ).first()
-        return bool(prior and is_current(prior))
+        return bool(prior and is_current(prior, scenario=scenario))
     return True
+
+
+def approval_summary(scenario):
+    """Return the auditable current state of every approval stage for a scenario."""
+    flows = sorted(
+        scenario.risk_approvals.all(), key=lambda flow: flow.created_at, reverse=True
+    )
+
+    def stage_status(stage):
+        matching = [flow for flow in flows if flow.risk_approval_stage == stage]
+        for flow in matching:
+            if flow.status in (
+                "accepted",
+                "submitted",
+                "change_requested",
+            ) and is_current(flow, scenario=scenario):
+                return flow.status
+        if any(
+            flow.status in ("accepted", "submitted", "change_requested")
+            for flow in matching
+        ):
+            return "outdated"
+        return matching[0].status if matching else "not_requested"
+
+    assessment = stage_status("assessment")
+    treatment = stage_status("treatment")
+    tolerance = scenario.risk_assessment.risk_tolerance
+    if tolerance < 0:
+        residual_acceptance = "tolerance_required"
+    elif not residual_risk_above_tolerance(scenario):
+        residual_acceptance = "not_required"
+    elif treatment != "accepted":
+        residual_acceptance = "waiting_for_treatment"
+    else:
+        residual_acceptance = stage_status("residual_acceptance")
+
+    return {
+        "assessment": assessment,
+        "treatment": treatment,
+        "residual_acceptance": residual_acceptance,
+        "complete": treatment == "accepted"
+        and residual_acceptance in ("accepted", "not_required"),
+    }
 
 
 def capture(scenario, stage, approver):

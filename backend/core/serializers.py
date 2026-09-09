@@ -1377,6 +1377,7 @@ class RiskScenarioWriteSerializer(BaseModelSerializer):
 
 
 class RiskScenarioReadSerializer(RiskScenarioWriteSerializer):
+    risk_approval_summary = serializers.SerializerMethodField()
     str = serializers.CharField(source="__str__", read_only=True)
     risk_assessment = FieldsRelatedField(["id", "name", "is_locked"])
     risk_matrix = FieldsRelatedField(source="risk_assessment.risk_matrix")
@@ -1415,6 +1416,13 @@ class RiskScenarioReadSerializer(RiskScenarioWriteSerializer):
     filtering_labels = FieldsRelatedField(many=True)
 
     within_tolerance = serializers.CharField()
+
+    def get_risk_approval_summary(self, obj):
+        from core.risk_approvals import approval_summary, risk_approvals_enabled
+
+        if not risk_approvals_enabled():
+            return None
+        return approval_summary(obj)
 
     class Meta:
         model = RiskScenario

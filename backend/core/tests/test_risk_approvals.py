@@ -20,6 +20,7 @@ from core.models import (
     ValidationFlow,
 )
 from core.risk_approvals import (
+    approval_summary,
     approval_candidates,
     is_current,
     management_approval_candidates,
@@ -126,6 +127,82 @@ def test_within_tolerance_treatment_completes_without_separate_acceptance(setup_
 
 
 @pytest.mark.django_db
+def test_approval_summary_tracks_each_stage_and_completion(setup_risk):
+    r = setup_risk
+    summary = approval_summary(r.scenario)
+    assert summary == {
+        "assessment": "not_requested",
+        "treatment": "not_requested",
+        "residual_acceptance": "not_required",
+        "complete": False,
+    }
+
+    assessment = create(r)
+    assert approval_summary(r.scenario)["assessment"] == "submitted"
+    decide(assessment, r.owner)
+    treatment = create(r, "treatment")
+    assert approval_summary(r.scenario)["treatment"] == "submitted"
+    decide(treatment, r.owner)
+    assert approval_summary(r.scenario) == {
+        "assessment": "accepted",
+        "treatment": "accepted",
+        "residual_acceptance": "not_required",
+        "complete": True,
+    }
+
+
+@pytest.mark.django_db
+def test_above_tolerance_summary_waits_for_management(setup_risk):
+    r = setup_risk
+    r.study.risk_tolerance = 0
+    r.study.save(update_fields=["risk_tolerance"])
+    assert (
+        approval_summary(r.scenario)["residual_acceptance"] == "waiting_for_treatment"
+    )
+    decide(create(r), r.owner)
+    decide(create(r, "treatment"), r.owner)
+    assert approval_summary(r.scenario)["residual_acceptance"] == "not_requested"
+
+
+@pytest.mark.django_db
+def test_risk_approval_creation_enqueues_notification(
+    setup_risk, django_capture_on_commit_callbacks, monkeypatch
+):
+    sent = []
+    monkeypatch.setattr(
+        "core.tasks.send_validation_flow_created_notification",
+        lambda flow: sent.append(flow.pk),
+    )
+    with django_capture_on_commit_callbacks(execute=True):
+        flow = create(setup_risk)
+    assert sent == [flow.pk]
+
+
+@pytest.mark.django_db
+def test_risk_approval_email_names_risk_and_requested_stage(setup_risk, monkeypatch):
+    from core import tasks
+
+    flow = create(setup_risk)
+    rendered = {}
+
+    monkeypatch.setattr(tasks, "check_email_configuration", lambda *args: True)
+    monkeypatch.setattr("core.email_utils.get_locale_for_email", lambda email: "de")
+
+    def capture_template(name, context, **kwargs):
+        rendered.update(name=name, context=context, kwargs=kwargs)
+        return {"subject": "subject", "body": "body"}
+
+    monkeypatch.setattr("core.email_utils.render_email_template", capture_template)
+    monkeypatch.setattr(tasks, "send_notification_email", lambda *args: None)
+    tasks.send_validation_flow_created_notification.call_local(flow)
+
+    assert rendered["name"] == "risk_approval_created"
+    assert rendered["context"]["risk_ref_id"] == setup_risk.scenario.ref_id
+    assert rendered["context"]["risk_name"] == setup_risk.scenario.name
+    assert rendered["context"]["risk_approval_stage"] == "Einstufung"
+
+
+@pytest.mark.django_db
 def test_above_tolerance_requires_separate_management_acceptance(setup_risk):
     r = setup_risk
     r.study.risk_tolerance = 0
@@ -134,14 +211,10 @@ def test_above_tolerance_requires_separate_management_acceptance(setup_risk):
     treatment = decide(create(r, "treatment"), r.owner)
     assert not treatment.events.first().residual_risk_accepted
 
-    acceptance = create(
-        r, "residual_acceptance", approver=str(r.requester.pk)
-    )
+    acceptance = create(r, "residual_acceptance", approver=str(r.requester.pk))
     with pytest.raises(ValidationError, match="riskApprovalResidualConfirmation"):
         decide(acceptance, r.requester)
-    acceptance = decide(
-        acceptance, r.requester, confirm_residual_risk=True
-    )
+    acceptance = decide(acceptance, r.requester, confirm_residual_risk=True)
     assert is_current(acceptance)
     assert acceptance.events.first().residual_risk_accepted
     r.scenario.refresh_from_db()

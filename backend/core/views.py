@@ -7401,10 +7401,17 @@ class RiskScenarioViewSet(ExportMixin, BaseModelViewSet):
         ).prefetch_related(
             "threats",
             "assets",
-            "applied_controls",
-            "existing_applied_controls",
+            "vulnerabilities",
+            "applied_controls__owner",
+            "existing_applied_controls__owner",
             "owner",
             "security_exceptions",
+            Prefetch(
+                "risk_approvals",
+                queryset=ValidationFlow.objects.select_related(
+                    "approver", "requester", "folder"
+                ),
+            ),
         )
 
     def _perform_write(self, serializer):

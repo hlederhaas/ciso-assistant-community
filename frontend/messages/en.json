@@ -6308,5 +6308,10 @@
 	"riskApprovalInvalidRequest": "Check the approver, decision and deadline.",
 	"riskOwnerApprovalsFeature": "Risk-owner approvals",
 	"riskOwnerApprovalsFeatureDescription": "Require approval of a risk scenario's assessment and treatment plan, with separate senior-management approval when residual risk exceeds tolerance. Requires validation flows.",
-	"riskApprovalFeatureDisabled": "Risk-owner approvals are not enabled."
+	"riskApprovalFeatureDisabled": "Risk-owner approvals are not enabled.",
+	"riskApprovalStatus": "Approval status",
+	"riskApprovalNotRequested": "Not requested",
+	"riskApprovalNotRequired": "Not required",
+	"riskApprovalWaitingForTreatment": "Waiting for treatment",
+	"riskApprovalToleranceMissingShort": "Tolerance missing"
 }
