@@ -19,7 +19,11 @@ from core.models import (
     RiskScenario,
     ValidationFlow,
 )
-from core.risk_approvals import approval_candidates, is_current
+from core.risk_approvals import (
+    approval_candidates,
+    is_current,
+    management_approval_candidates,
+)
 from core.serializers import ValidationFlowReadSerializer, ValidationFlowWriteSerializer
 
 
@@ -48,7 +52,7 @@ def setup_risk(db):
         name="Matrix", folder=folder, json_definition=RISK_MATRIX_JSON_DEFINITION
     )
     study = RiskAssessment.objects.create(
-        name="Study", folder=folder, risk_matrix=matrix
+        name="Study", folder=folder, risk_matrix=matrix, risk_tolerance=1
     )
     scenario = RiskScenario.objects.create(
         name="Service outage",
@@ -103,28 +107,101 @@ def decide(flow, user, status="accepted", **extras):
 
 
 @pytest.mark.django_db
-def test_two_stages_preserve_treatment_and_do_not_lock_study(setup_risk):
+def test_within_tolerance_treatment_completes_without_separate_acceptance(setup_risk):
     r = setup_risk
+    r.study.risk_tolerance = r.scenario.residual_level
+    r.study.save(update_fields=["risk_tolerance"])
     rating = decide(create(r), r.owner)
     flow = create(r, "treatment")
-    with pytest.raises(ValidationError, match="riskApprovalResidualConfirmation"):
-        decide(flow, r.owner)
-    flow.refresh_from_db()
-    assert flow.status == "submitted"
-    flow = decide(flow, r.owner, confirm_residual_risk=True)
+    flow = decide(flow, r.owner)
     r.scenario.refresh_from_db()
     r.study.refresh_from_db()
     assert r.scenario.treatment == "mitigate"
     assert not r.study.is_locked
     assert is_current(flow) and is_current(rating)
-    assert flow.events.first().residual_risk_accepted
+    assert not flow.events.first().residual_risk_accepted
     assert flow.events.first().risk_snapshot == flow.risk_snapshot
+    with pytest.raises(ValidationError, match="riskApprovalManagementNotRequired"):
+        create(r, "residual_acceptance", approver=str(r.requester.pk))
+
+
+@pytest.mark.django_db
+def test_above_tolerance_requires_separate_management_acceptance(setup_risk):
+    r = setup_risk
+    r.study.risk_tolerance = 0
+    r.study.save(update_fields=["risk_tolerance"])
+    decide(create(r), r.owner)
+    treatment = decide(create(r, "treatment"), r.owner)
+    assert not treatment.events.first().residual_risk_accepted
+
+    acceptance = create(
+        r, "residual_acceptance", approver=str(r.requester.pk)
+    )
+    with pytest.raises(ValidationError, match="riskApprovalResidualConfirmation"):
+        decide(acceptance, r.requester)
+    acceptance = decide(
+        acceptance, r.requester, confirm_residual_risk=True
+    )
+    assert is_current(acceptance)
+    assert acceptance.events.first().residual_risk_accepted
+    r.scenario.refresh_from_db()
+    assert r.scenario.treatment == "mitigate"
+
+
+@pytest.mark.django_db
+def test_above_tolerance_acceptance_requires_management_permission(setup_risk):
+    r = setup_risk
+    r.study.risk_tolerance = 0
+    r.study.save(update_fields=["risk_tolerance"])
+    decide(create(r), r.owner)
+    decide(create(r, "treatment"), r.owner)
+    ordinary_user = User.objects.create_user(email="ordinary@example.test")
+    with pytest.raises(ValidationError, match="riskApprovalManagementRequired"):
+        create(
+            r,
+            "residual_acceptance",
+            approver=str(ordinary_user.pk),
+        )
+    assert str(ordinary_user.pk) not in [
+        item["id"] for item in management_approval_candidates(r.scenario)
+    ]
+    assert str(r.requester.pk) in [
+        item["id"] for item in management_approval_candidates(r.scenario)
+    ]
+
+
+@pytest.mark.django_db
+def test_tolerance_change_invalidates_treatment_and_management_decisions(setup_risk):
+    r = setup_risk
+    r.study.risk_tolerance = 0
+    r.study.save(update_fields=["risk_tolerance"])
+    decide(create(r), r.owner)
+    treatment = decide(create(r, "treatment"), r.owner)
+    acceptance = decide(
+        create(r, "residual_acceptance", approver=str(r.requester.pk)),
+        r.requester,
+        confirm_residual_risk=True,
+    )
+    r.study.risk_tolerance = r.scenario.residual_level
+    r.study.save(update_fields=["risk_tolerance"])
+    assert not is_current(treatment)
+    assert not is_current(acceptance)
 
 
 @pytest.mark.django_db
 def test_treatment_requires_current_approved_assessment(setup_risk):
     with pytest.raises(ValidationError, match="riskApprovalAssessmentFirst"):
         create(setup_risk, "treatment")
+
+
+@pytest.mark.django_db
+def test_treatment_requires_configured_risk_tolerance(setup_risk):
+    r = setup_risk
+    decide(create(r), r.owner)
+    r.study.risk_tolerance = -1
+    r.study.save(update_fields=["risk_tolerance"])
+    with pytest.raises(ValidationError, match="riskApprovalToleranceRequired"):
+        create(r, "treatment")
 
 
 @pytest.mark.django_db
@@ -336,6 +413,11 @@ def test_api_options_and_cross_domain_access(setup_risk):
     response = client.get(url)
     assert response.status_code == 200, response.data
     assert str(r.owner.pk) in [user["id"] for user in response.data["approvers"]]
+    assert str(r.requester.pk) in [
+        user["id"] for user in response.data["management_approvers"]
+    ]
+    assert response.data["residual_risk_above_tolerance"] is False
+    assert response.data["risk_tolerance_configured"] is True
     outsider = User.objects.create_user(email="outsider@example.test")
     client.force_authenticate(outsider)
     assert client.get(url).status_code in (403, 404)

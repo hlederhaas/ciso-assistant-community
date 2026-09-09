@@ -100,23 +100,30 @@ approver; this is not an all-owners voting workflow.
 Assessment approval captures the scenario, rationale, ratings, risk matrix,
 owners, assets and existing controls. Treatment approval requires a current
 approved assessment and captures the treatment option, planned controls, their
-owners and dates, and the residual risk. The approver explicitly approves the
-plan and accepts its stated residual risk subject to the planned measures. That
-decision does not prove implementation or effectiveness, and does not change a
-`mitigate` decision to `accept`.
+owners and dates, and the residual risk. If the residual level is at or below the
+risk assessment's configured tolerance, the approved treatment completes the
+workflow without a separate risk-acceptance decision. If the residual level is
+above tolerance, a third decision is required from a named user who can approve
+risk acceptances in the scenario's domain. This authority can be assigned to the
+organisation's senior-management group without hard-coding an organisational
+title. Treatment approval cannot be requested until the assessment has a risk
+tolerance. The decision does not prove implementation or effectiveness, and does
+not change a `mitigate` decision to `accept`.
 
 Every submission and decision retains its snapshot. A change to the captured
-content or approval authority makes the request or approval out of date. A
-revoked assessment also invalidates the treatment approval that relied on it.
+content, risk tolerance or approval authority makes the request or approval out
+of date. A revoked assessment also invalidates the treatment approval that relied
+on it; an invalid treatment approval invalidates its above-tolerance acceptance.
 Normal progress updates to a planned control do not invalidate its plan; changed
 scope, owner or dates do. For a pending stale request, request changes and
 resubmit; for an already accepted decision, submit a new request. Historical
 decisions remain visible and cannot be edited or deleted through the flow API.
 The scenario and other scenarios in the study remain editable.
 
-These two steps are an organisational workflow choice. They support risk-owner
-approval of treatment plans and acceptance of residual risks; they do not imply
-that ISO 27001 mandates this particular software sequence.
+These approval steps are an organisational workflow choice. They support
+risk-owner approval of treatment plans and management escalation of residual
+risks above tolerance; they do not imply that ISO 27001 mandates this particular
+software sequence.
 
 ## Related resources
 

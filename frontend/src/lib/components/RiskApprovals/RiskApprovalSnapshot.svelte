@@ -40,6 +40,10 @@
 				<dd>{rating('impact', content.treatment.residual_impact)}</dd>
 				<dt>{m.residualRisk()}</dt>
 				<dd>{rating('risk', content.treatment.residual_level)}</dd>
+				{#if content.risk_governance?.risk_tolerance >= 0}
+					<dt>{m.riskTolerance()}</dt>
+					<dd>{rating('risk', content.risk_governance.risk_tolerance)}</dd>
+				{/if}
 			{/if}
 		</dl>
 		{#if content.assets?.length}<p>

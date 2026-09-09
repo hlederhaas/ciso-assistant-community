@@ -7221,12 +7221,29 @@ class RiskScenarioViewSet(ExportMixin, BaseModelViewSet):
     @action(detail=True, methods=["get"], url_path="approval-options")
     def approval_options(self, request, pk=None):
         """List named risk owners eligible to approve this scenario."""
-        from core.risk_approvals import approval_candidates, risk_approvals_enabled
+        from core.risk_approvals import (
+            approval_candidates,
+            management_approval_candidates,
+            residual_risk_above_tolerance,
+            risk_approvals_enabled,
+        )
 
         if not risk_approvals_enabled():
             raise PermissionDenied("riskApprovalFeatureDisabled")
         scenario = self.get_object()
-        return Response({"approvers": approval_candidates(scenario)})
+        return Response(
+            {
+                "approvers": approval_candidates(scenario),
+                "management_approvers": management_approval_candidates(scenario),
+                "residual_risk_above_tolerance": residual_risk_above_tolerance(
+                    scenario
+                ),
+                "risk_tolerance": scenario.risk_assessment.risk_tolerance,
+                "risk_tolerance_configured": (
+                    scenario.risk_assessment.risk_tolerance >= 0
+                ),
+            }
+        )
 
     """
     API endpoint that allows risk scenarios to be viewed or edited.

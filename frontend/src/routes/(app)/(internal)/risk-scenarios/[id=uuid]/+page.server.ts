@@ -80,9 +80,23 @@ export const load = (async ({ fetch, params, cookies, locals }) => {
 	);
 	const approvalOptions = riskApprovalsEnabled
 		? await fetch(`${baseEndpoint}approval-options/`).then((res) =>
-				res.ok ? res.json() : { approvers: [] }
+				res.ok
+					? res.json()
+					: {
+							approvers: [],
+							management_approvers: [],
+							residual_risk_above_tolerance: false,
+							risk_tolerance: -1,
+							risk_tolerance_configured: false
+						}
 			)
-		: { approvers: [] };
+		: {
+				approvers: [],
+				management_approvers: [],
+				residual_risk_above_tolerance: false,
+				risk_tolerance: -1,
+				risk_tolerance_configured: false
+			};
 	const riskApprovals = riskApprovalsEnabled
 		? await fetchAllPages(fetch, `${BASE_API_URL}/validation-flows/?risk_scenario=${params.id}`)
 		: [];
@@ -110,7 +124,7 @@ export const actions: Actions = {
 		const parsed = z
 			.object({
 				approver: z.uuid(),
-				stage: z.enum(['assessment', 'treatment']),
+				stage: z.enum(['assessment', 'treatment', 'residual_acceptance']),
 				notes: z.string().max(10000),
 				deadline: z.union([z.literal(''), z.iso.date()])
 			})

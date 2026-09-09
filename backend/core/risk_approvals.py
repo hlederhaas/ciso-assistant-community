@@ -46,6 +46,25 @@ def owner_can_approve(scenario, user):
     )
 
 
+def management_can_accept(scenario, user):
+    """Check access and the existing risk-acceptance approval permission."""
+    if not user or not user.is_active:
+        return False
+    return RoleAssignment.is_object_readable(user, RiskScenario, scenario.pk) and (
+        RoleAssignment.is_access_allowed(
+            user,
+            Permission.objects.get(codename="approve_riskacceptance"),
+            scenario.folder,
+        )
+    )
+
+
+def residual_risk_above_tolerance(scenario):
+    """Return whether a rated residual risk exceeds a configured tolerance."""
+    tolerance = scenario.risk_assessment.risk_tolerance
+    return tolerance >= 0 and scenario.residual_level > tolerance
+
+
 def approval_candidates(scenario):
     """Return active named users allowed to approve the scenario."""
     # Resolve teams and entity representatives through the application's actor
@@ -54,6 +73,15 @@ def approval_candidates(scenario):
         {"id": str(user.pk), "email": user.email, "name": str(user)}
         for user in User.objects.filter(is_active=True).order_by("email")
         if owner_can_approve(scenario, user)
+    ]
+
+
+def management_approval_candidates(scenario):
+    """Return users authorised to accept an above-tolerance residual risk."""
+    return [
+        {"id": str(user.pk), "email": user.email, "name": str(user)}
+        for user in User.objects.filter(is_active=True).order_by("email")
+        if management_can_accept(scenario, user)
     ]
 
 
@@ -117,12 +145,16 @@ def snapshot(scenario, stage):
         ),
         "existing_controls": _controls(scenario.existing_applied_controls),
     }
-    if stage == "treatment":
+    if stage in ("treatment", "residual_acceptance"):
         data["treatment"] = _values(
             scenario,
             ["treatment", "residual_proba", "residual_impact", "residual_level"],
         )
         data["planned_controls"] = _controls(scenario.applied_controls, planned=True)
+        data["risk_governance"] = {
+            "risk_tolerance": scenario.risk_assessment.risk_tolerance,
+            "residual_risk_above_tolerance": residual_risk_above_tolerance(scenario),
+        }
     return json.loads(json.dumps(data, cls=DjangoJSONEncoder))
 
 
@@ -135,49 +167,75 @@ def is_current(flow):
     scenario = RiskScenario.objects.select_related("risk_assessment__risk_matrix").get(
         pk=flow.risk_scenario_id
     )
-    if not owner_can_approve(scenario, flow.approver):
+    authorised = (
+        management_can_accept(scenario, flow.approver)
+        if flow.risk_approval_stage == "residual_acceptance"
+        else owner_can_approve(scenario, flow.approver)
+    )
+    if not authorised:
         return False
     if flow.risk_snapshot.get("content") != snapshot(
         scenario, flow.risk_approval_stage
     ):
         return False
-    if flow.risk_approval_stage == "treatment":
-        rating = ValidationFlow.objects.filter(
-            pk=flow.risk_snapshot.get("assessment_approval"),
+    prerequisite = {
+        "treatment": ("assessment_approval", "assessment"),
+        "residual_acceptance": ("treatment_approval", "treatment"),
+    }.get(flow.risk_approval_stage)
+    if prerequisite:
+        snapshot_key, stage = prerequisite
+        prior = ValidationFlow.objects.filter(
+            pk=flow.risk_snapshot.get(snapshot_key),
             risk_scenario=scenario,
-            risk_approval_stage="assessment",
+            risk_approval_stage=stage,
             status="accepted",
         ).first()
-        return bool(rating and is_current(rating))
+        return bool(prior and is_current(prior))
     return True
 
 
 def capture(scenario, stage, approver):
     """Validate a request and capture its immutable decision state."""
-    if not owner_can_approve(scenario, approver):
+    if stage == "residual_acceptance":
+        if not management_can_accept(scenario, approver):
+            raise ValidationError({"approver": "riskApprovalManagementRequired"})
+    elif not owner_can_approve(scenario, approver):
         raise ValidationError({"approver": "riskApprovalOwnerRequired"})
     if scenario.current_proba < 0 or scenario.current_impact < 0:
         raise ValidationError("riskApprovalRatingRequired")
     data = {"content": snapshot(scenario, stage)}
-    if stage == "treatment":
+    if stage in ("treatment", "residual_acceptance"):
+        if scenario.risk_assessment.risk_tolerance < 0:
+            raise ValidationError("riskApprovalToleranceRequired")
         if (
             scenario.treatment in ("open", "cancelled")
             or min(scenario.residual_proba, scenario.residual_impact) < 0
         ):
             raise ValidationError("riskApprovalTreatmentRequired")
-        rating = next(
+        prerequisite_stage = "assessment" if stage == "treatment" else "treatment"
+        prior = next(
             (
                 flow
                 for flow in scenario.risk_approvals.filter(
-                    risk_approval_stage="assessment", status="accepted"
+                    risk_approval_stage=prerequisite_stage, status="accepted"
                 ).order_by("-created_at")
                 if is_current(flow)
             ),
             None,
         )
-        if rating is None:
-            raise ValidationError("riskApprovalAssessmentFirst")
-        data["assessment_approval"] = str(rating.pk)
+        if prior is None:
+            error = (
+                "riskApprovalAssessmentFirst"
+                if stage == "treatment"
+                else "riskApprovalTreatmentFirst"
+            )
+            raise ValidationError(error)
+        if stage == "residual_acceptance":
+            if not residual_risk_above_tolerance(scenario):
+                raise ValidationError("riskApprovalManagementNotRequired")
+            data["treatment_approval"] = str(prior.pk)
+        else:
+            data["assessment_approval"] = str(prior.pk)
     return data
 
 
@@ -246,7 +304,10 @@ def update_approval(flow, data, user):
             raise ValidationError("riskApprovalDeadlinePassed")
         if not is_current(flow):
             raise ValidationError("riskApprovalStale")
-        residual_accepted = flow.risk_approval_stage == "treatment"
+        # Within tolerance, the approved treatment completes the workflow
+        # automatically. Only an above-tolerance management decision records an
+        # explicit residual-risk acceptance.
+        residual_accepted = flow.risk_approval_stage == "residual_acceptance"
         if residual_accepted and data.get("confirm_residual_risk") is not True:
             raise ValidationError("riskApprovalResidualConfirmation")
     elif new == "submitted":

@@ -62,7 +62,7 @@
 				props: {
 					action,
 					requireResidualConfirmation:
-						action === 'approve' && validation_flow.risk_approval_stage === 'treatment',
+						action === 'approve' && validation_flow.risk_approval_stage === 'residual_acceptance',
 					onConfirm: async (notes: string, confirmResidualRisk?: boolean) => {
 						const formData = new FormData();
 						formData.append('notes', notes);
@@ -325,7 +325,9 @@
 			<h2 class="text-xl font-semibold">
 				{validation_flow.risk_approval_stage === 'assessment'
 					? m.riskApprovalAssessment()
-					: m.riskApprovalTreatment()}
+					: validation_flow.risk_approval_stage === 'residual_acceptance'
+						? m.riskApprovalResidualAcceptance()
+						: m.riskApprovalTreatment()}
 			</h2>
 			<Anchor class="anchor" href="/risk-scenarios/{validation_flow.risk_scenario.id}"
 				>{validation_flow.risk_scenario.str}</Anchor

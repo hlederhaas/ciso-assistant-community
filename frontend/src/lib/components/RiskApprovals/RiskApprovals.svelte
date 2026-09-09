@@ -6,11 +6,19 @@
 	let {
 		flows,
 		approvers,
+		managementApprovers,
+		residualRiskAboveTolerance,
+		riskTolerance,
+		riskToleranceConfigured,
 		canRequest,
 		errorMessage = ''
 	}: {
 		flows: any[];
 		approvers: { id: string; email: string; name: string }[];
+		managementApprovers: { id: string; email: string; name: string }[];
+		residualRiskAboveTolerance: boolean;
+		riskTolerance: number;
+		riskToleranceConfigured: boolean;
 		canRequest: boolean;
 		errorMessage?: string;
 	} = $props();
@@ -24,19 +32,51 @@
 				flow.risk_approval_current
 		)
 	);
+	const treatmentApproved = $derived(
+		flows.some(
+			(flow) =>
+				flow.risk_approval_stage === 'treatment' &&
+				flow.status === 'accepted' &&
+				flow.risk_approval_current
+		)
+	);
+	const managementAcceptanceApproved = $derived(
+		flows.some(
+			(flow) =>
+				flow.risk_approval_stage === 'residual_acceptance' &&
+				flow.status === 'accepted' &&
+				flow.risk_approval_current
+		)
+	);
+	const selectedApprovers = $derived(
+		stage === 'residual_acceptance' ? managementApprovers : approvers
+	);
+	function stageLabel(value: string) {
+		if (value === 'assessment') return m.riskApprovalAssessment();
+		if (value === 'residual_acceptance') return m.riskApprovalResidualAcceptance();
+		return m.riskApprovalTreatment();
+	}
 </script>
 
 <section class="card p-4 space-y-4 bg-surface-50-950" data-testid="risk-approvals">
 	<h2 class="text-lg font-semibold">{m.riskApprovals()}</h2>
 	<p class="text-sm">{m.riskApprovalHelp()}</p>
+	{#if !riskToleranceConfigured}
+		<p class="text-sm preset-tonal-warning p-3">{m.riskApprovalToleranceRequired()}</p>
+	{:else if treatmentApproved && !residualRiskAboveTolerance}
+		<p class="text-sm preset-tonal-success p-3">{m.riskApprovalWithinTolerance()}</p>
+	{/if}
+	{#if residualRiskAboveTolerance}
+		<p class="text-sm preset-tonal-warning p-3">
+			{managementAcceptanceApproved
+				? m.riskApprovalManagementAccepted()
+				: m.riskApprovalManagementPending({ tolerance: String(riskTolerance) })}
+		</p>
+	{/if}
 	{#each flows as flow (flow.id)}
 		<div class="flex flex-wrap items-center gap-3 border-b border-surface-200-800 pb-2">
 			<Anchor href="/validation-flows/{flow.id}" class="anchor">{flow.ref_id}</Anchor>
-			<span
-				>{flow.risk_approval_stage === 'assessment'
-					? m.riskApprovalAssessment()
-					: m.riskApprovalTreatment()}</span
-			>
+			<span>{stageLabel(flow.risk_approval_stage)}</span>
 			<span class="badge">{safeTranslate(flow.status)}</span>
 			{#if ['accepted', 'submitted'].includes(flow.status) && !flow.risk_approval_current}
 				<span class="badge preset-tonal-warning">{m.riskApprovalOutdated()}</span>
@@ -68,15 +108,20 @@
 						><span>{m.riskApprovalStage()}</span>
 						<select name="stage" bind:value={stage} class="select">
 							<option value="assessment">{m.riskApprovalAssessment()}</option>
-							<option value="treatment" disabled={!ratingApproved}
+							<option value="treatment" disabled={!ratingApproved || !riskToleranceConfigured}
 								>{m.riskApprovalTreatment()}</option
 							>
+							{#if residualRiskAboveTolerance}
+								<option value="residual_acceptance" disabled={!treatmentApproved}
+									>{m.riskApprovalResidualAcceptance()}</option
+								>
+							{/if}
 						</select>
 					</label>
 					<label class="label"
 						><span>{m.approver()}</span>
 						<select name="approver" class="select" required>
-							{#each approvers as approver}<option value={approver.id}
+							{#each selectedApprovers as approver}<option value={approver.id}
 									>{approver.name || approver.email}</option
 								>{/each}
 						</select>
@@ -90,6 +135,9 @@
 					>
 				</div>
 				{#if !ratingApproved}<p class="text-sm">{m.riskApprovalAssessmentFirst()}</p>{/if}
+				{#if stage === 'residual_acceptance' && managementApprovers.length === 0}
+					<p class="text-sm preset-tonal-warning p-3">{m.riskApprovalNoManagementApprover()}</p>
+				{/if}
 				<label class="label"
 					><span>{m.requestNotes()}</span><textarea
 						class="textarea"
@@ -99,8 +147,10 @@
 					></textarea></label
 				>
 				{#if errorMessage}<p role="alert" class="preset-tonal-error p-3">{errorMessage}</p>{/if}
-				<button class="btn preset-filled-primary-500" disabled={pending} type="submit"
-					>{m.riskApprovalRequest()}</button
+				<button
+					class="btn preset-filled-primary-500"
+					disabled={pending || selectedApprovers.length === 0}
+					type="submit">{m.riskApprovalRequest()}</button
 				>
 			</form>
 		{/if}

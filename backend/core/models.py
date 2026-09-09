@@ -10686,7 +10686,8 @@ class TaskNode(AbstractBaseModel, FolderMixin):
 class ValidationFlow(AbstractBaseModel, FolderMixin, FilteringLabelMixin):
     class RiskApprovalStage(models.TextChoices):
         ASSESSMENT = "assessment", "Assessment"
-        TREATMENT = "treatment", "Treatment and residual risk"
+        TREATMENT = "treatment", "Treatment"
+        RESIDUAL_ACCEPTANCE = "residual_acceptance", "Residual risk acceptance"
 
     risk_scenario = models.ForeignKey(
         RiskScenario,
