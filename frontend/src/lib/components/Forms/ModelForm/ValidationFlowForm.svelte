@@ -6,7 +6,7 @@
 	import Select from '$lib/components/Forms/Select.svelte';
 	import Dropdown from '$lib/components/Dropdown/Dropdown.svelte';
 	import MarkdownRenderer from '$lib/components/MarkdownRenderer.svelte';
-	import type { SuperForm } from 'sveltekit-superforms';
+	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms';
 	import type { ModelInfo, CacheLock } from '$lib/utils/types';
 	import { m } from '$paraglide/messages';
 	import { page } from '$app/state';
@@ -34,22 +34,30 @@
 	// Check if we're coming from a specific assessment context
 	const hasPresetTargets = $derived(
 		initialData.risk_assessments ||
-		initialData.risk_scenarios ||
-		initialData.compliance_assessments ||
-		initialData.business_impact_analysis ||
-		initialData.crq_studies ||
-		initialData.ebios_studies ||
-		initialData.entity_assessments ||
-		initialData.findings_assessments
+			initialData.risk_scenarios ||
+			initialData.compliance_assessments ||
+			initialData.business_impact_analysis ||
+			initialData.crq_studies ||
+			initialData.ebios_studies ||
+			initialData.entity_assessments ||
+			initialData.findings_assessments
 	);
 
 	// Determine the approver endpoint based on allow_self_validation setting
 	const allowSelfValidation = $derived(page.data?.settings?.allow_self_validation ?? false);
-	const riskScenarioId = $derived(initialData.risk_scenarios?.[0]);
+	const { value: riskScenarioValues } = formFieldProxy(form, 'risk_scenarios');
+	const riskScenarioIds = $derived(
+		(Array.isArray($riskScenarioValues)
+			? $riskScenarioValues
+			: initialData.risk_scenarios || []
+		).filter(Boolean)
+	);
 	const approverEndpoint = $derived(
-		`users?is_approver=true${allowSelfValidation ? '' : '&exclude_current=true'}${
-			riskScenarioId ? `&risk_scenario_owner=${riskScenarioId}` : ''
-		}`
+		`users?${riskScenarioIds.length ? '' : 'is_approver=true&'}${
+			allowSelfValidation ? '' : 'exclude_current=true&'
+		}${riskScenarioIds
+			.map((id: string) => `risk_scenario_owner=${encodeURIComponent(id)}`)
+			.join('&')}`.replace(/[?&]$/, '')
 	);
 
 	async function fetchDefaultRefId() {
@@ -84,17 +92,19 @@
 		bind:cachedValue={formDataCache['subject']}
 	/>
 {/if}
-<AutocompleteSelect
-	{form}
-	optionsEndpoint={approverEndpoint}
-	optionsLabelField="email"
-	field="approver"
-	cacheLock={cacheLocks['approver']}
-	bind:cachedValue={formDataCache['approver']}
-	label={m.approver()}
-	helpText={m.validationApproverHelpText()}
-	disabled={initialData.approver}
-/>
+{#key approverEndpoint}
+	<AutocompleteSelect
+		{form}
+		optionsEndpoint={approverEndpoint}
+		optionsLabelField="email"
+		field="approver"
+		cacheLock={cacheLocks['approver']}
+		bind:cachedValue={formDataCache['approver']}
+		label={m.approver()}
+		helpText={m.validationApproverHelpText()}
+		disabled={initialData.approver}
+	/>
+{/key}
 {#if object?.id}
 	<div class="space-y-2">
 		<span class="text-sm font-medium text-surface-700-300">{m.requestNotes()}</span>
@@ -181,6 +191,7 @@
 			label={m.riskScenarios()}
 			multiple
 			disabled={initialData.risk_scenarios}
+			onChange={() => form.form.update((data) => ({ ...data, approver: null }), { taint: false })}
 		/>
 		<AutocompleteSelect
 			{form}

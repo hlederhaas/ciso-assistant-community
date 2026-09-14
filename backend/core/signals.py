@@ -22,22 +22,26 @@ def _delete_evidence_revision_attachment(sender, instance: EvidenceRevision, **k
             )
 
 
-RISK_SCENARIO_DECISION_RELATIONS = (
-    RiskScenario.owner.through,
-    RiskScenario.assets.through,
-    RiskScenario.threats.through,
-    RiskScenario.vulnerabilities.through,
-    RiskScenario.applied_controls.through,
-    RiskScenario.existing_applied_controls.through,
-    RiskScenario.incidents.through,
-    RiskScenario.qualifications.through,
-    RiskScenario.security_exceptions.through,
-    RiskScenario.antecedent_scenarios.through,
-)
+RISK_SCENARIO_DECISION_RELATIONS = {
+    RiskScenario.owner.through: "risk_scenarios",
+    RiskScenario.assets.through: "risk_scenarios",
+    RiskScenario.threats.through: "risk_scenarios",
+    RiskScenario.vulnerabilities.through: "risk_scenarios",
+    RiskScenario.applied_controls.through: "risk_scenarios",
+    RiskScenario.existing_applied_controls.through: "risk_scenarios_e",
+    RiskScenario.incidents.through: "risk_scenarios",
+    RiskScenario.qualifications.through: "risk_scenarios_qualifications",
+    RiskScenario.security_exceptions.through: "risk_scenarios",
+    RiskScenario.antecedent_scenarios.through: "consequent_scenarios",
+}
 
 
 def _touch_risk_scenario(sender, instance, action, reverse, pk_set, **kwargs):
     """Keep updated_at meaningful when decision-relevant M2M content changes."""
+    if action == "pre_clear" and reverse:
+        accessor = RISK_SCENARIO_DECISION_RELATIONS[sender]
+        getattr(instance, accessor).update(updated_at=timezone.now())
+        return
     if action not in {"post_add", "post_remove", "post_clear"}:
         return
     now = timezone.now()

@@ -11787,9 +11787,8 @@ class ValidationFlow(AbstractBaseModel, FolderMixin, FilteringLabelMixin):
         event = self.last_event
         return event.event_notes if event else None
 
-    @property
-    def is_stale(self) -> bool:
-        """Whether a linked risk scenario changed since this flow's current decision."""
+    def is_stale_for(self, scenarios) -> bool:
+        """Return whether scenarios changed since this flow's current decision."""
         if self.status not in (self.Status.SUBMITTED, self.Status.ACCEPTED):
             return False
 
@@ -11807,8 +11806,13 @@ class ValidationFlow(AbstractBaseModel, FolderMixin, FilteringLabelMixin):
         return any(
             scenario.updated_at > event.created_at
             or scenario.risk_assessment.updated_at > event.created_at
-            for scenario in self.risk_scenarios.all()
+            for scenario in scenarios
         )
+
+    @property
+    def is_stale(self) -> bool:
+        """Whether a linked risk scenario changed since this flow's current decision."""
+        return self.is_stale_for(self.risk_scenarios.all())
 
     def __str__(self) -> str:
         # ref_id is nullable and only auto-assigned in save(); bulk-created

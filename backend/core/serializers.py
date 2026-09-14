@@ -6554,7 +6554,15 @@ class ValidationFlowWriteSerializer(BaseModelSerializer):
 
         existing_scenarios = list(self.instance.risk_scenarios.all())
         if existing_scenarios:
-            if self.RISK_IMMUTABLE_FIELDS.intersection(attrs):
+            approver_changed = (
+                "approver" in attrs
+                and getattr(attrs["approver"], "pk", None)
+                != self.instance.approver_id
+            )
+            scenarios_changed = "risk_scenarios" in attrs and {
+                scenario.pk for scenario in attrs["risk_scenarios"]
+            } != {scenario.pk for scenario in existing_scenarios}
+            if approver_changed or scenarios_changed:
                 raise serializers.ValidationError("riskValidationImmutable")
             if attrs.get("status") == ValidationFlow.Status.ACCEPTED:
                 if self.instance.is_stale:
@@ -6700,6 +6708,43 @@ class ValidationFlowWriteSerializer(BaseModelSerializer):
                             "to_status": new_status,
                         }
                     )
+
+                if new_status == ValidationFlow.Status.ACCEPTED:
+                    scenario_ids = list(
+                        instance.risk_scenarios.order_by("pk").values_list(
+                            "pk", flat=True
+                        )
+                    )
+                    if scenario_ids:
+                        locked_scenarios = list(
+                            RiskScenario.objects.select_for_update()
+                            .filter(pk__in=scenario_ids)
+                            .order_by("pk")
+                        )
+                        assessment_ids = {
+                            scenario.risk_assessment_id
+                            for scenario in locked_scenarios
+                        }
+                        list(
+                            RiskAssessment.objects.select_for_update()
+                            .filter(pk__in=assessment_ids)
+                            .order_by("pk")
+                        )
+                        locked_scenarios = list(
+                            RiskScenario.objects.filter(pk__in=scenario_ids)
+                            .select_related("risk_assessment")
+                            .prefetch_related("owner")
+                            .order_by("pk")
+                        )
+                        if instance.is_stale_for(locked_scenarios):
+                            raise serializers.ValidationError(
+                                "riskValidationOutdated"
+                            )
+                        self._validate_risk_scenario_request(
+                            locked_scenarios,
+                            instance.approver,
+                            instance.folder,
+                        )
 
                 # Update the instance
                 updated_instance = super().update(instance, validated_data)

@@ -174,6 +174,55 @@ def test_control_change_marks_request_stale(risk_case):
 
 
 @pytest.mark.django_db
+def test_reverse_control_clear_marks_request_stale(risk_case):
+    control = AppliedControl.objects.create(
+        name="Recovery plan", folder=risk_case.folder, status="to_do"
+    )
+    risk_case.scenario.applied_controls.add(control)
+    flow = create_flow(risk_case)
+
+    control.risk_scenarios.clear()
+    flow.refresh_from_db()
+
+    assert flow.is_stale
+
+
+@pytest.mark.django_db
+def test_unchanged_risk_links_are_allowed_on_update(risk_case):
+    flow = create_flow(risk_case)
+    serializer = ValidationFlowWriteSerializer(
+        flow,
+        data={
+            "approver": str(risk_case.owner.pk),
+            "risk_scenarios": [str(risk_case.scenario.pk)],
+        },
+        partial=True,
+        context={"request": SimpleNamespace(user=risk_case.requester)},
+    )
+
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
+
+@pytest.mark.django_db
+def test_acceptance_rechecks_changes_after_initial_validation(risk_case):
+    flow = create_flow(risk_case)
+    serializer = ValidationFlowWriteSerializer(
+        flow,
+        data={"status": "accepted"},
+        partial=True,
+        context={"request": SimpleNamespace(user=risk_case.owner)},
+    )
+    serializer.is_valid(raise_exception=True)
+
+    risk_case.scenario.name = "Changed after validation"
+    risk_case.scenario.save()
+
+    with pytest.raises(serializers.ValidationError, match="riskValidationOutdated"):
+        serializer.save()
+
+
+@pytest.mark.django_db
 def test_risk_summary_uses_residual_tolerance_and_latest_flow(risk_case):
     serializer = RiskScenarioReadSerializer()
     assert (

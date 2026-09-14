@@ -206,7 +206,7 @@ from ebios_rm.models import (
     AttackPath,
 )
 
-from tprm.models import Entity, Solution, Contract
+from tprm.models import Contract, Entity, Representative, Solution
 from privacy.models import Processing, DataBreach, RightRequest
 from resilience.models import AssetAssessment, BusinessImpactAnalysis
 
@@ -4871,6 +4871,9 @@ class RiskAssessmentViewSet(BaseModelViewSet):
         changes = risk_assessment.sync_to_applied_controls(
             reset_residual=reset_residual, dry_run=dry_run
         )
+        changes = with_risk_validation_status(
+            RiskScenario.objects.filter(pk__in=[scenario.pk for scenario in changes])
+        )
         return Response(
             {"changes": RiskScenarioReadSerializer(changes, many=True).data}
         )
@@ -7457,6 +7460,18 @@ class RiskScenarioFilter(TimestampRangeFilterMixin, GenericFilterSet):
         }
 
 
+def with_risk_validation_status(queryset):
+    """Load relations used by the risk validation summary without N+1 queries."""
+    return queryset.select_related("risk_assessment").prefetch_related(
+        Prefetch(
+            "validationflow_set",
+            queryset=ValidationFlow.objects.select_related(
+                "approver", "requester", "folder"
+            ).prefetch_related("events", "risk_scenarios__risk_assessment"),
+        )
+    )
+
+
 class RiskScenarioViewSet(ExportMixin, BaseModelViewSet):
     """
     API endpoint that allows risk scenarios to be viewed or edited.
@@ -7606,7 +7621,7 @@ class RiskScenarioViewSet(ExportMixin, BaseModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.select_related(
+        queryset = queryset.select_related(
             "risk_assessment",
             "risk_assessment__risk_matrix",
             "risk_assessment__perimeter",
@@ -7618,15 +7633,8 @@ class RiskScenarioViewSet(ExportMixin, BaseModelViewSet):
             "existing_applied_controls",
             "owner",
             "security_exceptions",
-            Prefetch(
-                "validationflow_set",
-                queryset=ValidationFlow.objects.select_related(
-                    "approver", "requester", "folder"
-                ).prefetch_related(
-                    "events", "risk_scenarios__risk_assessment"
-                ),
-            ),
         )
+        return with_risk_validation_status(queryset)
 
     def _perform_write(self, serializer):
         if not serializer.validated_data.get(
@@ -7959,8 +7967,10 @@ class RiskAcceptanceViewSet(BaseModelViewSet):
 
 class UserFilter(GenericFilterSet):
     is_approver = df.BooleanFilter(method="filter_approver", label="Approver")
-    risk_scenario_owner = df.UUIDFilter(
-        method="filter_risk_scenario_owner", label="Risk scenario owner"
+    risk_scenario_owner = GenericFilterSet.UUIDInFilter(
+        method="filter_risk_scenario_owner",
+        label="Risk scenario owner",
+        widget=QueryArrayWidget,
     )
     is_applied_control_owner = df.BooleanFilter(
         method="filter_applied_control_owner", label="Applied control owner"
@@ -8004,20 +8014,49 @@ class UserFilter(GenericFilterSet):
         return queryset.exclude(id__in=approvers_id)
 
     def filter_risk_scenario_owner(self, queryset, name, value):
-        if not value or not RoleAssignment.is_object_readable(
-            self.request.user, RiskScenario, value
-        ):
+        scenario_ids = set(value or [])
+        if not scenario_ids:
             return queryset.none()
-        scenario = RiskScenario.objects.prefetch_related("owner").get(pk=value)
-        owner_ids = set(scenario.owner.values_list("pk", flat=True))
-        matching_user_ids = [
-            user.pk
-            for user in queryset
-            if owner_ids.intersection(
-                actor.pk for actor in Actor.get_all_for_user(user)
+
+        readable_ids = set(
+            RoleAssignment.get_viewable_object_ids(
+                self.request.user, RiskScenario
             )
-        ]
-        return queryset.filter(pk__in=matching_user_ids)
+        )
+        if not scenario_ids.issubset(readable_ids):
+            return queryset.none()
+
+        scenarios = list(
+            RiskScenario.objects.filter(pk__in=scenario_ids).prefetch_related("owner")
+        )
+        if len(scenarios) != len(scenario_ids):
+            return queryset.none()
+
+        for scenario in scenarios:
+            owner_ids = set(scenario.owner.values_list("pk", flat=True))
+            if not owner_ids:
+                return queryset.none()
+            owner_actors = Actor.objects.filter(pk__in=owner_ids)
+            direct_user_ids = owner_actors.filter(user__isnull=False).values_list(
+                "user_id", flat=True
+            )
+            team_ids = owner_actors.filter(team__isnull=False).values_list(
+                "team_id", flat=True
+            )
+            entity_ids = owner_actors.filter(entity__isnull=False).values_list(
+                "entity_id", flat=True
+            )
+            represented_user_ids = Representative.objects.filter(
+                entity_id__in=entity_ids, user__isnull=False
+            ).values_list("user_id", flat=True)
+            queryset = queryset.filter(
+                Q(pk__in=direct_user_ids)
+                | Q(pk__in=represented_user_ids)
+                | Q(led_teams__pk__in=team_ids)
+                | Q(deputy_teams__pk__in=team_ids)
+                | Q(teams__pk__in=team_ids)
+            ).distinct()
+        return queryset
 
     def filter_applied_control_owner(self, queryset, name, value):
         return queryset.filter(applied_controls__isnull=not value)
@@ -9092,7 +9131,9 @@ class FolderViewSet(BaseModelViewSet):
             .distinct()
         )
         non_active_controls = controls.exclude(status="active")
-        risk_scenarios = RiskScenario.objects.filter(owner__in=actors).distinct()
+        risk_scenarios = with_risk_validation_status(
+            RiskScenario.objects.filter(owner__in=actors).distinct()
+        )
         controls_progress = 0
         evidences_progress = 0
         tot_ac = controls.count()
