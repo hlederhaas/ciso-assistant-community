@@ -1,0 +1,1193 @@
+convert_library_version: 'v2 ; Compat Mode: [0] {[v2.1] (DEFAULT) Don''t use any Compatibility Mode}'
+urn: urn:intuitem:risk:library:mapping-cra-regulation-annexes-and-iso27001-2022
+locale: en
+ref_id: mapping-cra-regulation-annexes-and-iso27001-2022
+name: Cyber Resilience Act (EU) 2024/2847 Annexes <-> ISO/IEC 27001:2022
+description: Non-official mapping of overlapping requirements between the Cyber Resilience Act annexes and ISO/IEC
+  27001:2022. The mapping was produced with AI assistance and editorially reviewed. An intersection indicates related
+  control intent; it does not establish equivalence, certification or legal conformity.
+copyright: 'Community-authored, non-official mapping. CRA legal text: European Union law. ISO/IEC 27001 is referenced
+  by identifier only.'
+version: 1
+publication_date: '2026-09-16'
+provider: community
+packager: community
+translations:
+  de:
+    name: Cyberresilienz-Verordnung (EU) 2024/2847 - ISO/IEC 27001:2022
+    description: Nicht amtliche Zuordnung inhaltlicher Überschneidungen zwischen den Anhängen der Cyberresilienz-Verordnung
+      und ISO/IEC 27001:2022. Das Mapping wurde mit KI-Unterstützung erstellt und redaktionell geprüft. Eine Überschneidung
+      kennzeichnet einen verwandten Regelungszweck; sie belegt weder Gleichwertigkeit noch Zertifizierung oder Rechtskonformität.
+    copyright: 'Von der Community erstelltes, nicht amtliches Mapping. CRA-Rechtstext: Recht der Europäischen Union.
+      ISO/IEC 27001 wird nur über Kennungen referenziert.'
+  fr:
+    name: Règlement (UE) 2024/2847 sur la cyberrésilience - ISO/IEC 27001:2022
+    description: Correspondance non officielle des exigences qui se recoupent entre les annexes du règlement sur
+      la cyberrésilience et l'ISO/IEC 27001:2022. La correspondance a été élaborée avec l'assistance de l'IA puis
+      révisée par un rédacteur. Un recoupement signale un objectif de contrôle connexe; il n'établit ni équivalence,
+      ni certification, ni conformité juridique.
+    copyright: 'Correspondance non officielle créée par la communauté. Texte juridique du CRA: droit de l''Union
+      européenne. L''ISO/IEC 27001 est uniquement référencée par ses identifiants.'
+dependencies:
+- urn:intuitem:risk:library:cra-resolution-annexes
+- urn:intuitem:risk:library:iso27001-2022
+objects:
+  requirement_mapping_sets:
+  - urn: urn:intuitem:risk:req_mapping_set:mapping-cra-regulation-annexes-and-iso27001-2022
+    ref_id: mapping-cra-regulation-annexes-and-iso27001-2022
+    name: Cyber Resilience Act (EU) 2024/2847 Annexes <-> ISO/IEC 27001:2022
+    description: Non-official mapping of overlapping requirements between the Cyber Resilience Act annexes and ISO/IEC
+      27001:2022. The mapping was produced with AI assistance and editorially reviewed. An intersection indicates
+      related control intent; it does not establish equivalence, certification or legal conformity.
+    translations:
+      de:
+        name: Cyberresilienz-Verordnung (EU) 2024/2847 - ISO/IEC 27001:2022
+        description: Nicht amtliche Zuordnung inhaltlicher Überschneidungen zwischen den Anhängen der Cyberresilienz-Verordnung
+          und ISO/IEC 27001:2022. Das Mapping wurde mit KI-Unterstützung erstellt und redaktionell geprüft. Eine
+          Überschneidung kennzeichnet einen verwandten Regelungszweck; sie belegt weder Gleichwertigkeit noch Zertifizierung
+          oder Rechtskonformität.
+      fr:
+        name: Règlement (UE) 2024/2847 sur la cyberrésilience - ISO/IEC 27001:2022
+        description: Correspondance non officielle des exigences qui se recoupent entre les annexes du règlement
+          sur la cyberrésilience et l'ISO/IEC 27001:2022. La correspondance a été élaborée avec l'assistance de
+          l'IA puis révisée par un rédacteur. Un recoupement signale un objectif de contrôle connexe; il n'établit
+          ni équivalence, ni certification, ni conformité juridique.
+    source_framework_urn: urn:intuitem:risk:framework:cra-resolution-annexes
+    target_framework_urn: urn:intuitem:risk:framework:iso27001-2022
+    requirement_mappings:
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:6.1.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.27
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.a
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.a
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.27
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.c
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.c
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.19
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.c
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.32
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.15
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.16
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.17
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.18
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.5
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.e
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.34
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.e
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.24
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.f
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.24
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.f
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.g
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.34
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.h
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.h
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.30
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.h
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.6
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.h
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.13
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.h
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.14
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.i
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.20
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.i
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.21
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.i
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.22
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.j
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.j
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.20
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.j
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.22
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.j
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.27
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.k
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.7
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.k
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.k
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.k
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.27
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.k
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.28
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.k
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.l
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.15
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.l
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.16
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.m
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.14
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.1.2.m
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.10
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.21
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.19
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.32
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.14
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.24
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.24
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.6.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.19
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.21
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.6.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.19
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.24
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.32
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.14
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:1.2.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.19
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.4
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.24
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.6.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:6.1.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.20
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.19
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.37
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.a
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.37
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.a
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.14
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.32
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.c
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.37
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.c
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.19
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.37
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.7.14
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.10
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.e
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.e
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.19
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.f
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.21
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.f
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.8.f
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.27
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.9
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:2.9
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.21
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.4
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:5.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1.a
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.19
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.32
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1.c
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1.c
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.7.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.1.d
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.37
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.27
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.32
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.a
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.a
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.a
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.27
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.a
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.28
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.21
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.24
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.b
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.c
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.c
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.16
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.2.c
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:6.1.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.22
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.36
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.9
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:7.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.21
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.36
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.4.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.4.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.1.4.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.3.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.3.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.3.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.3.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.3.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.4.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.4.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.4.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.4.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.4.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.4.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.4.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.4.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.7
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.2.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.2.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.9
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.4
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.9
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.10
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.10
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.33
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.2.11
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.3.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.3.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.36
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.3.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.3.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.3.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.16
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.3.3.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.3.3.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.3.3.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.3.3.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.33
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.3.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.36
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.1.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.1.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.1.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.1.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.36
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.8
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:6.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.26
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.27
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.37
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.25
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.29
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.33
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.2.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.16
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.2.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:8.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:10.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:6.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.3.5
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.32
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.36
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.2.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.2.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.33
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.2.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.2.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.2.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.33
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.2.1
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:9.2.2
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.4.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.35
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.5.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.5.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.5.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.5.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.33
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.33
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6.1
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.33
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6.2
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.33
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:6.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6.3
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.8.32
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.5.3
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.6.4
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.33
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:7.4
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.7
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:a.5.31
+      relationship: intersect
+      rationale: semantic
+    - source_requirement_urn: urn:intuitem:risk:req_node:cra-resolution-annexes:8.4.8
+      target_requirement_urn: urn:intuitem:risk:req_node:iso27001-2022:5.3
+      relationship: intersect
+      rationale: semantic
