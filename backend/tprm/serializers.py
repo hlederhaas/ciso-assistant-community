@@ -173,6 +173,7 @@ class EntityImportExportSerializer(BaseModelSerializer):
             "default_maturity",
             "default_trust",
             "legal_identifiers",
+            "address",
             "country",
             "currency",
             "dora_entity_type",
@@ -214,6 +215,7 @@ class EntityAssessmentImportExportSerializer(BaseModelSerializer):
             "maturity",
             "trust",
             "conclusion",
+            "expiry_date",
             "reference_link",
             "entity",
             "compliance_assessment",
@@ -703,7 +705,7 @@ class RepresentativeReadSerializer(BaseModelSerializer):
     def get_language(self, obj):
         if not obj.user:
             return None
-        code = obj.user.get_preferences().get("lang")
+        code = obj.user.language_code()
         return dict(settings.LANGUAGES).get(code, code)
 
     class Meta:
@@ -852,6 +854,19 @@ class SolutionSubcontractorWriteSerializer(serializers.Serializer):
     recipient = serializers.PrimaryKeyRelatedField(
         queryset=Entity.objects.all(), required=False, allow_null=True, default=None
     )
+
+
+class SolutionAutocompleteSerializer(BaseModelSerializer):
+    folder = FieldsRelatedField(source="provider_entity.folder")
+
+    class Meta:
+        model = Solution
+        fields = ["id", "name", "ref_id", "folder"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["str"] = str(instance)
+        return data
 
 
 class SolutionReadSerializer(BaseModelSerializer):

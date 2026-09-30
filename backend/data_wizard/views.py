@@ -1,5 +1,6 @@
 import csv
 import enum
+import importlib
 import io
 import logging
 import math
@@ -16,6 +17,7 @@ from uuid import UUID
 
 import pandas as pd
 import structlog
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
 from django.db import IntegrityError, models
@@ -610,6 +612,34 @@ def _resolve_applied_controls(value: Any, folder: "Folder", request) -> SideObje
     )
 
 
+def _resolve_owners(value: Any) -> list[UUID]:
+    """Resolve semicolon-separated user emails or team names to Actor IDs.
+
+    Each entry is matched first as a user email, then as a team name.
+    Unresolvable entries are silently skipped.
+    """
+    if not isinstance(value, str):
+        return []
+
+    entries = set(entry.strip() for entry in value.split(";"))
+    actor_ids = []
+
+    for entry in entries:
+        # Try matching as user email first
+        actor = Actor.objects.filter(user__email__iexact=entry).first()
+        if actor is None:
+            # Try matching as team name
+            actor = Actor.objects.filter(team__name__iexact=entry).first()
+        if actor is not None:
+            actor_ids.append(actor.id)
+        else:
+            logger.warning(
+                "Could not resolve an owner reference to a user email or team name during import; skipping."
+            )
+
+    return actor_ids
+
+
 def build_matrix_mappings(risk_matrix: RiskMatrix) -> dict:
     """Label-to-value mappings for probability and impact, translations included."""
     mappings: dict[str, dict[str, int]] = {"probability": {}, "impact": {}}
@@ -889,6 +919,19 @@ class RecordConsumer[Context = None](ABC):
 
         assert is_serializer, f"Invalid serializer for class {cls.__name__}"
 
+    @classmethod
+    def get_serializer_class(cls) -> type[BaseModelSerializer]:
+        """Resolve the edition's serializer, mirroring what `SerializerFactory`
+        does for viewsets. `SERIALIZER_CLASS` is bound at import time, so without
+        this the enterprise override never reaches the importer and nested domains
+        are rejected with `subDomainsRequirePro` even on PRO.
+        """
+        override_module = settings.MODULE_PATHS.get("serializers")
+        if not override_module:
+            return cls.SERIALIZER_CLASS
+        module = importlib.import_module(override_module)
+        return getattr(module, cls.SERIALIZER_CLASS.__name__, cls.SERIALIZER_CLASS)
+
     @abstractmethod
     def create_context(self) -> tuple[Context, Optional[Error]]:
         pass
@@ -1028,7 +1071,7 @@ class RecordConsumer[Context = None](ABC):
                         break
                     case ConflictMode.UPDATE:
                         update_data = self._build_update_data(record, record_data)
-                        serializer = self.SERIALIZER_CLASS(
+                        serializer = self.get_serializer_class()(
                             instance=existing,
                             data=update_data,
                             partial=True,
@@ -1049,7 +1092,7 @@ class RecordConsumer[Context = None](ABC):
                             )
                         continue
 
-            serializer = self.SERIALIZER_CLASS(
+            serializer = self.get_serializer_class()(
                 data=record_data, context={"request": self.request}
             )
             if serializer.is_valid():
@@ -1436,37 +1479,9 @@ class AppliedControlRecordConsumer(RecordConsumer[AppliedControlContext]):
         # Always set data["owner"] when the column is present, even if blank,
         # so that UPDATE mode can clear the M2M instead of silently preserving it.
         if "owner" in record:
-            data["owner"] = self._resolve_owners(record.get("owner"))
+            data["owner"] = _resolve_owners(record.get("owner"))
 
         return data, None
-
-    @staticmethod
-    def _resolve_owners(value: Any) -> list[UUID]:
-        """Resolve semicolon-separated user emails or team names to Actor IDs.
-
-        Each entry is matched first as a user email, then as a team name.
-        Unresolvable entries are silently skipped.
-        """
-        if not isinstance(value, str):
-            return []
-
-        entries = set(entry.strip() for entry in value.split(";"))
-        actor_ids = []
-
-        for entry in entries:
-            # Try matching as user email first
-            actor = Actor.objects.filter(user__email__iexact=entry).first()
-            if actor is None:
-                # Try matching as team name
-                actor = Actor.objects.filter(team__name__iexact=entry).first()
-            if actor is not None:
-                actor_ids.append(actor.id)
-            else:
-                logger.warning(
-                    "Could not resolve an owner reference to a user email or team name during Applied Control import; skipping."
-                )
-
-        return actor_ids
 
 
 class EvidenceRecordConsumer(RecordConsumer):
@@ -1778,6 +1793,8 @@ class FindingsAssessmentRecordConsumer(RecordConsumer[FindingsAssessmentContext]
         {
             "asset": ["asset", "assets", "actif", "actifs"],
             "filtering_labels": ["filtering_labels", "labels", "label"],
+            "applied_controls": ["applied_controls", "controls"],
+            "owner": ["owner"],
         }
     )
     SEVERITY_MAP: Final[dict[Optional[str], int]] = {
@@ -1912,6 +1929,28 @@ class FindingsAssessmentRecordConsumer(RecordConsumer[FindingsAssessmentContext]
         )
         self._record_side_effects("assets_created", assets)
 
+        # With SKIP/STOP, a row matching an existing Finding never reaches the
+        # serializer — so resolving applied_controls unconditionally would
+        # create (and never link) a control for a row that's about to be
+        # discarded. Peek for that duplicate first, using only the raw
+        # ref_id/name (identical to what find_existing() will check again in
+        # process_records), and skip control resolution entirely when it's
+        # going to be skipped or stop the whole import anyway.
+        is_discarded_duplicate = self.on_conflict in (
+            ConflictMode.SKIP,
+            ConflictMode.STOP,
+        ) and self.find_existing({"ref_id": record.get("ref_id"), "name": name})
+
+        if is_discarded_duplicate:
+            applied_controls = SideObjects()
+        else:
+            applied_controls = _resolve_applied_controls(
+                record.get("applied_controls") or record.get("controls"),
+                context.folder,
+                self.request,
+            )
+            self._record_side_effects("applied_controls_created", applied_controls)
+
         finding_data = {
             "name": name,
             "description": record.get("description"),
@@ -1923,6 +1962,7 @@ class FindingsAssessmentRecordConsumer(RecordConsumer[FindingsAssessmentContext]
             "due_date": _parse_date(record.get("due_date")),
             "observation": record.get("observation", ""),
             "vulnerabilities": vulnerabilities,
+            "applied_controls": applied_controls.ids,
         }
 
         # Only pass status when the source provides one — a None status fails
@@ -1937,6 +1977,13 @@ class FindingsAssessmentRecordConsumer(RecordConsumer[FindingsAssessmentContext]
         if assets.ids:
             finding_data["asset"] = assets.ids[0]
 
+        # Resolve owner field (semicolon-separated user emails or team names).
+        # Always set finding_data["owner"] when the column is present, even if
+        # blank, so that UPDATE mode can clear the M2M instead of silently
+        # preserving it.
+        if "owner" in record:
+            finding_data["owner"] = _resolve_owners(record.get("owner"))
+
         unresolved = []
         if failed_vulnerabilities:
             unresolved.append(
@@ -1944,6 +1991,10 @@ class FindingsAssessmentRecordConsumer(RecordConsumer[FindingsAssessmentContext]
             )
         if assets.failed:
             unresolved.append(f"Could not resolve assets: {', '.join(assets.failed)}")
+        if applied_controls.failed:
+            unresolved.append(
+                f"Could not resolve applied controls: {', '.join(applied_controls.failed)}"
+            )
         if len(asset_tokens) > 1:
             unresolved.append(
                 f"A finding takes a single asset: ignored {', '.join(asset_tokens[1:])}"
@@ -4871,6 +4922,7 @@ class LoadFileView(APIView):
         # rather than being dropped silently. Set here so every caller's results
         # dict carries the key.
         results.setdefault("warnings", [])
+        controls_created: list[str] = []
         for record in records:
             ref_id = record.get("ref_id")
             urn = record.get("urn")
@@ -4919,6 +4971,22 @@ class LoadFileView(APIView):
                         requirement_data["status"] = requirement_progress
                     if observations not in (None, ""):
                         requirement_data["observation"] = observations
+                    controls_cell = record.get("applied_controls") or record.get(
+                        "controls"
+                    )
+                    if controls_cell not in (None, ""):
+                        controls = _resolve_applied_controls(
+                            controls_cell, compliance_assessment.folder, request
+                        )
+                        controls_created.extend(controls.created)
+                        requirement_data["applied_controls"] = controls.ids
+                        if controls.failed:
+                            results["warnings"].append(
+                                {
+                                    "requirement": ReqNode.ref_id or ReqNode.urn,
+                                    "warning": f"Could not resolve controls: {', '.join(controls.failed)}",
+                                }
+                            )
                     impl_score = record.get("implementation_score")
                     doc_score = record.get("documentation_score")
                     score = record.get("score")
@@ -5015,6 +5083,10 @@ class LoadFileView(APIView):
                 results["failed"] += 1
                 results["errors"].append({"record": record, "error": str(e)})
 
+        if controls_created:
+            results.setdefault("details", {})["applied_controls_created"] = len(
+                controls_created
+            )
         logger.info(
             f"Compliance Assessment import complete. Success: {results['successful']}, Failed: {results['failed']}"
         )
